@@ -59,9 +59,8 @@ FuPixels = FocalLength / PixelWidth;
 FvPixels = FocalLength / PixelHeight;
 
 % Construct the K-Matrix for return
-KMatrix = ...
-[ FuPixels Skewness P_u*ChipWidth;...
-FvPixels P_v*ChipHeight;...
- 0 0 1];
+KMatrix = [FuPixels Skewness P_u*ChipWidth;
+           0 FvPixels P_v*ChipHeight;
+          0 0 1];
 
 end

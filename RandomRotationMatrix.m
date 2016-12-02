@@ -8,8 +8,8 @@ function [ R ] = RandomRotationMatrix()
 % Make sure we have a random matrix larger than 'eps'
 xnorm = 0;
 while xnorm < eps
-x = rand(3,1);
-xnorm = norm(x);
+    x = rand(3,1);
+    xnorm = norm(x);
  end
 % The 'random ' unit vector
 xhat = x / xnorm;

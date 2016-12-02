@@ -30,6 +30,7 @@ Normz = norm(InitialViewVector);
 if Normz < eps
     error('Unable to normalize the camera z-axis');
 end
+%Try and add a loop to catch the error here
 
 %Define a uniot vector
 InitialCameraz = InitialViewVector / Normz;
@@ -52,7 +53,7 @@ Normx = norm(CameraX);
 if Normx < eps
     error('Unable to normalize the camera x-axis')
 end
-
+%if this fails add a par to make a new random
 CameraX = CameraX/Normx;
 
 %Define the y-axis
