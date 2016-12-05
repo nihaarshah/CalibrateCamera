@@ -33,9 +33,9 @@ T_ow = PositionGrid();
 
 T_cw = FillImage (T_ow, KMatrix, CameraHeight, CameraWidth);
 
-% 5. Now fill the camera with a noisy image of the grid an generate the
+% 5. Now fill the camera with a noisy image of the grid and generate the
 % point correspondences 
-% Correspond is a set of pairs of vectors of the form [[u v]' [x y ]']
+% Correspond is a set of pairs of vectors of the form [[u v]' [x y]']
 %for each grid corner that lies inside the image.
 
 Correspond = BuildNoisyCorrespondences(T_ow, T_cw, CalibrationGrid, KMatrix ...
