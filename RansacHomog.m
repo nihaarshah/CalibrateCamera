@@ -5,9 +5,9 @@ function [Homog , BestConsensus] = RansacHomog(Correspond, MaxError, NRuns)
 
 % MaxError is the maximum error for a point to be rejected in the consensus
 % set
-% NRuns is the nymber of times to run the estimator 
+% NRuns is the nymber of times to run the estimator
 
-% Homof is the homography that has been identified. If no homography can be
+% Homog is the homography that has been identified. If no homography can be
 % computed then a 3x3 zero matrix is returned
 
 % 1. For each of NRuns, choose as set of 4 points.
@@ -25,14 +25,14 @@ n = length(Correspond);
 % Allocate space for the homography
 Homog = zeros(3);
 
-% The number of points in the best consenus 
+% The number of points in the best consenus
 nBest = 0;
 
 for Runs = 1:NRuns
     
     RankTest = 1;
     while RankTest == 1
-        % RankTest is set to 1 if the 4 points do not give 
+        % RankTest is set to 1 if the 4 points do not give
         % a full rank matrix in the estimator
         
         RankTest = 0;
@@ -53,7 +53,7 @@ for Runs = 1:NRuns
             
             while searching == 1
                 searching = 0;
-                % Inititial sample point 
+                % Inititial sample point
                 SamplePoints(j) = 1 + fix(n*rand);
                 if SamplePoints(j) > n
                     SamplePoints(j) = n;
@@ -68,32 +68,67 @@ for Runs = 1:NRuns
             end
         end
         
-% 6. BestConsenus now contains the largest set of consistent estimates.
-% Use this set to estimate the homography using a robust inverse
-if nBest > 0
-    % The number of measurements in the consenus set 
-    Regressor = zeros(2*nBest,1);
-    DataVac = zeros(2*nBest,1);
-    
-    % Construct the regressor
-    for j = 1:nBest
-        r1 = j*2-1;
-        r2 = j*2;
-        % HomogRowPair generates 2 rows of the 8 column matrix that
-        % multiplies the unknown vector of the homography elements
-        % to get the vector of the measurements.
-        
-        [Regressor(r1:r2,:), DataVec(r1:r2)] =...
-            HomogRowPair(Correspond(:,BestConsensus(j)));
-        
-        % Find the singular value decomposition in order to compute the
-        % robust pseudo inverse
-        [U, D, V] = svd(Regressor, 'econ');
-        
-        % The condition number of the computation- a measure of how reiable
-        % the inversion is 
-        if D(8,8) < eps
-            Condition = D(1,1)/D(8,8);
+        % 6. BestConsenus now contains the largest set of consistent estimates.
+        % Use this set to estimate the homography using a robust inverse
+        if nBest > 0
+            % The number of measurements in the consenus set
+            Regressor = zeros(2*nBest,1);
+            DataVac = zeros(2*nBest,1);
+            
+            % Construct the regressor
+            for j = 1:nBest
+                r1 = j*2-1;
+                r2 = j*2;
+                % HomogRowPair generates 2 rows of the 8 column matrix that
+                % multiplies the unknown vector of the homography elements
+                % to get the vector of the measurements.
+                
+                [Regressor(r1:r2,:), DataVec(r1:r2)] =...
+                    HomogRowPair(Correspond(:,BestConsensus(j)));
+                
+                % Find the singular value decomposition in order to compute the
+                % robust pseudo inverse
+                [U, D, V] = svd(Regressor, 'econ');
+                
+                % The condition number of the computation- a measure of how reiable
+                % the inversion is
+                if D(8,8) < eps
+                    Condition = 1.0E16;     %Just a very big number
+                else
+                    Condition = D(1,1)/D(8,8);
+                end
+                
+                if Condition > 1.0e8
+                    %A very poor condition number-signal that there is no
+                    %homography
+                    Homog = zeros(3);
+                else
+                    %Conditioning is good
+                    %Invert the diagognal matrix of singular values
+                    for j = 1:8
+                        D(j,j) = 1.0/D(j,j);
+                    end
+                    
+                    HomogVec = V*(D*(U'*DataVec));
+                    
+                    %Construct the homography
+                    
+                    Homog(1,1) = HomogVec(1);
+                    Homog(1,2) = HomogVec(2);
+                    Homog(1,3) = HomogVec(3);
+                    Homog(2,1) = HomogVec(4);
+                    Homog(2,2) = HomogVec(5);
+                    Homog(2,3) = HomogVec(6);
+                    Homog(3,1) = HomogVec(7);
+                    Homog(3,1) = HomogVec(8);
+                    Homog(3,3) = 1;
+                end
+                
+                else
+                    % Signal that no homography could be found
+                    Homog = zeros(3);
+                    BestConsensus = 0;
+            end
         end
         
         

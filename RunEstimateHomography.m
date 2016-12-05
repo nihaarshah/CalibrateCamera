@@ -31,7 +31,7 @@ T_ow = PositionGrid();
 % 4. Choose a 'random' location for the camera that fills the image.
 % T_cw is the 4x4 ransformation matrix from camera to the world
 
-T_cw = FillImage (T_ow, KMatrix, CameraHeight, CameraWidth);
+T_cw = FillImage (T_ow, KMatrix,GridWidth, CameraHeight, CameraWidth);
 
 % 5. Now fill the camera with a noisy image of the grid and generate the
 % point correspondences 
