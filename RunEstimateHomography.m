@@ -39,7 +39,7 @@ T_cw = FillImage (T_ow, KMatrix,GridWidth, CameraHeight, CameraWidth);
 %for each grid corner that lies inside the image.
 
 Correspond = BuildNoisyCorrespondences(T_ow, T_cw, CalibrationGrid, KMatrix ...
-,CameraHeight, CameraWidth);
+,CameraHeight, CameraWidth);%Not sure how to use CameraWidth and Height. Not added noise yet
 
 % 6. Add in some 'outliers' by replacing [u v]' with a point
 % somewhere in the image.
