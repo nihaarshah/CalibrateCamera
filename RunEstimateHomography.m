@@ -55,7 +55,7 @@ for j=1:length(Correspond)
 end
 
 figure(1)
-plot(Correspond(1,:), Correspnd(2,:), '.')
+plot(Correspond(1,:), Correspond(2,:), '.')
 title('The noisy measurements of the title corners')
 axis ij
 
@@ -71,6 +71,6 @@ RansacRuns = 50;    %The number of runs when creating the consensus set
 % First find the object frame in the camera frame
 T_oc = T_cw \ T_ow;
 %Construct the non-normalized homography from K*[x y t]
-OrigHomog = KMatrix * [T_ow(1:3,1) T_oc(1:3,2) T_ox(1:3,4)];
+OrigHomog = KMatrix * [T_oc(1:3,1) T_oc(1:3,2) T_oc(1:3,4)];
 %And normalize so that (3,3) is 1.0-output for inspection
 OrigHomog = OrigHomog / OrigHomog(3,3);

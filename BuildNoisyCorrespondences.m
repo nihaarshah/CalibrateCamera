@@ -13,7 +13,7 @@ qo=horzcat(CalibrationGrid(j,1:2),CalibrationGrid(j,4)); % [x y 1]
 qc =Homography * qo'; % [u v 1]'*S?
 newxy = qo(1,1:2);  % [x y]
 newuv = qc(1:2,1); % [u v]'
-newuvxy = horzcat(newuv,newxy');
+newuvxy = vertcat(newuv,newxy');
 Correspond = horzcat(newuvxy,Correspond); 
 end
 
