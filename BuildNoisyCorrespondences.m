@@ -11,8 +11,10 @@ Correspond =[]; %Initializing
 for j=1:m
 qo=horzcat(CalibrationGrid(j,1:2),CalibrationGrid(j,4)); % [x y 1]
 qc =Homography * qo'; % [u v 1]'*S?
+noise = random('norm',0,0.0,3,1);
+qcnoisy = qc+noise;
 newxy = qo(1,1:2);  % [x y]
-newuv = qc(1:2,1); % [u v]'
+newuv = qcnoisy(1:2,1); % [u v]'
 newuvxy = vertcat(newuv,newxy');
 Correspond = horzcat(newuvxy,Correspond); 
 end
@@ -20,6 +22,12 @@ end
 % output is Correspond = [ u1 x1 u2 x2 u3 x3
 %                         v1 y1 v2 y2 v3 y3 ]
 
+
+% 4 row vector with noise. Multiply each term of the uvxy matrix with a
+ % noisy term from x. But we will multiply each column with same noise
+ % (maybe not what we want?)
+%  x = random('norm', 0, 0.1, 4, 1); 
+%  Correspond = Correspond * diag(x);
 
 end
 
@@ -36,8 +44,4 @@ end
  %are concerned with grid corners inside the image and not necessarily the
  %actual grid corners?
  
- % 4 row vector with noise. Multiply each term of the uvxy matrix with a
- % noisy term from x. But we will multiply each column with same noise
- % (maybe not what we want?)
-%  x = random('norm', 0, 0.1, 4, 1); 
-%  Correspond = Correspond * diag(x);
+ 
