@@ -12,26 +12,29 @@ Correspond =[]; %Initializing
 for j=1:m
     qo=horzcat(CalibrationGrid(j,1:2),CalibrationGrid(j,4)); % [x y 1]
     qc =Homography * qo'; % [u v 1]'*S?
-    if (0<qc(1)<CameraWidth && 0<qc(2)<CameraHeight)
+    qc(1) = qc(1)/qc(3); % normalizing
+    qc(2) = qc(2)/qc(3); % normalizing
+    if (0<qc(1)<2000 && 0<qc(2)<2000)
         
-        noise = random('norm',0,0.0,3,1);
-        qcnoisy = qc+noise;
+        %noise = random('norm',0,0.0,3,1);
+        %qcnoisy = qc+noise;
         newxy = qo(1,1:2);  % [x y]
-        newuv = qcnoisy(1:2,1); % [u v]'
+        newuv = qc(1:2,1); % [u v]'
         newuvxy = vertcat(newuv,newxy');
         Correspond = horzcat(newuvxy,Correspond);
     end
-    
-    % output is Correspond = [ u1 x1 u2 x2 u3 x3
-    %                         v1 y1 v2 y2 v3 y3 ]
-    
-    
-    % 4 row vector with noise. Multiply each term of the uvxy matrix with a
-    % noisy term from x. But we will multiply each column with same noise
-    % (maybe not what we want?)
-    %  x = random('norm', 0, 0.1, 4, 1);
-    %  Correspond = Correspond * diag(x);
-    
+end
+
+% output is Correspond = [ u1 x1 u2 x2 u3 x3
+%                         v1 y1 v2 y2 v3 y3 ]
+
+
+% 4 row vector with noise. Multiply each term of the uvxy matrix with a
+% noisy term from x. But we will multiply each column with same noise
+% (maybe not what we want?)
+%  x = random('norm', 0, 0.1, 4, 1);
+%  Correspond = Correspond * diag(x);
+
 end
 
 %Correspond = horzcat(GridCornersC(1:2,1:4),GridCorners(1:2,1:4));
