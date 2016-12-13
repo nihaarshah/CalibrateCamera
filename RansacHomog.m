@@ -1,5 +1,5 @@
 function [Homog , BestConsensus] = RansacHomog(Correspond, MaxError, NRuns)
-%RansacHomog runs a ransac estimation of the homography
+% RansacHomog runs a ransac estimation of the homography
 % passed as pairs of points in Correspond where Correspond
 % is a set of 4-vetcors of the form [[u v]' ; [x y]']
 

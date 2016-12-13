@@ -19,7 +19,7 @@
 
 %2. Construct a 1m by 1m grid with 10mm tiles in the grid frame
 % The grid is a set of 4-element vectors [x y 0 1]'
-GridWidth = 1000;
+GridWidth = 100;
 GridIncrement = 10;
 CalibrationGrid = BuildGrid(GridIncrement, GridWidth);
 

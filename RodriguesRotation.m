@@ -10,7 +10,7 @@ function [ R ] = RodriguesRotation(RotationAxis,RotationAngle ) %RodriguesRotati
 
 
 % Peform tests on correctness of input if length(RotationAxis) ~=3
-error('The rotation axis must only have 3 elements')
+
 if length(RotationAxis) ~=3
     
    error('The rotation axis must only have 3 elements')
@@ -24,7 +24,8 @@ end
 % This step may not be necessary if the axis is already unit norm RotationAxis = RotationAxis / NormAxis;
 % Formulate the cross product matrix
 K = [ 0 -RotationAxis(3) RotationAxis(2); ...
-RotationAxis(3) 0 -RotationAxis(1) ; ... -RotationAxis(2) RotationAxis(1) 0];
+RotationAxis(3) 0 -RotationAxis(1) ; ... 
+-RotationAxis(2) RotationAxis(1) 0];
 % Compute the rotation matrix using Rodrigues Rotation Formula
 R = eye(3) + sin(RotationAngle)*K + (1 - cos(RotationAngle))*K^2;
 end
