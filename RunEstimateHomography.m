@@ -19,7 +19,7 @@
 
 %2. Construct a 1m by 1m grid with 10mm tiles in the grid frame
 % The grid is a set of 4-element vectors [x y 0 1]'
-GridWidth = 100;
+GridWidth = 1000;
 GridIncrement = 10;
 CalibrationGrid = BuildGrid(GridIncrement, GridWidth);
 
@@ -31,7 +31,7 @@ T_ow = PositionGrid();
 % 4. Choose a 'random' location for the camera that fills the image.
 % T_cw is the 4x4 ransformation matrix from camera to the world
 
-T_cw = FillImage (T_ow, KMatrix,GridWidth, CameraHeight, CameraWidth);
+T_cw = FillImage(T_ow, KMatrix,GridWidth, CameraHeight, CameraWidth);
 
 % 5. Now fill the camera with a noisy image of the grid and generate the
 % point correspondences 
@@ -39,7 +39,7 @@ T_cw = FillImage (T_ow, KMatrix,GridWidth, CameraHeight, CameraWidth);
 %for each grid corner that lies inside the image.
 
 Correspond = BuildNoisyCorrespondences(T_ow, T_cw, CalibrationGrid, KMatrix ...
-,CameraHeight, CameraWidth);%Not sure how to use CameraWidth and Height. Not added noise yet
+,CameraHeight, CameraWidth);
 
 % 6. Add in some 'outliers' by replacing [u v]' with a point
 % somewhere in the image.

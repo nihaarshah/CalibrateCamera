@@ -60,7 +60,7 @@ for CalImage = 1: nImages
         % T_cw is the 4x4 transformation matrix from camera to world
         T_cw = FillImage(T_ow,KMatrix,GridWidth,CameraHeight,CameraWidth);
         % 5 We now fill the camera with a noisy image of the grid and generate
-        % the point correpondences.
+        % the point correspondences.
         
         % Correspond is a set of pairs of vectors of the form [[u v]' [x y ]']
         % for each grid corner that lies inside the image.

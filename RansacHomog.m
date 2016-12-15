@@ -149,7 +149,7 @@ if nBest > 0
         % multiplies the unknown vector of the homography elements
         % to get the vector of the measurements.
         
-        [Regressor(r1:r2,:), DataVec(r1:r2)] =...
+        [Regressor(r1:r2,:), DataVec(r1:r2,1)] =...
             HomogRowPair(Correspond(:,BestConsensus(j)));
     end
     % Find the singular value decomposition in order to compute the
