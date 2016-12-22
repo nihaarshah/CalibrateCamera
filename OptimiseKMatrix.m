@@ -168,7 +168,7 @@ for j = 1: nImages
     % The diagonal image block associated with the frame parameters
     StartRow = 6 + (j-1)*6;
     EndRow = StartRow +5;
-    JTransposeJ(StartRow:EndRow ,StartRow:EndRow) = ...
+    JTransposeJ(StartRow:EndRow,StartRow:EndRow) = ...
         OptComponents{j,NFRAMEJACOB}' * OptComponents{j,NFRAMEJACOB};
     
     JTransposeJ(1:5,StartRow:EndRow) = ...
@@ -179,8 +179,7 @@ for j = 1: nImages
     
     % Compute the gradient vector 
     Gradient (1:5) = Gradient (1:5) + ...
-        JTransposeJ(1:5,StartRow:EndRow)
-    OptComponents{j,NKMATJACOB}'*OptComponents{j,NERRORVECTOR}; 
+        OptComponents{j,NKMATJACOB}'* OptComponents{j,NERRORVECTOR}; 
     
     Gradient(StartRow:EndRow) = OptComponents{j,NFRAMEJACOB}'*...
         OptComponents{j,NERRORVECTOR};
@@ -190,8 +189,10 @@ end
 % The initial value of mu
 mu = max(diag(JTransposeJ)) * 0.1;
 % The initial value of the exponential growth factor nu
-% This variable is used to increase mu if the error goes up. nu = 2;
-% Now perform the optimisation Searching = 1;
+% This variable is used to increase mu if the error goes up. 
+nu = 2;
+% Now perform the optimisation 
+Searching = 1;
 Iterations = 0;
 MaxIterations = 100;
 

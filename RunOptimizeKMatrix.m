@@ -174,10 +174,10 @@ for j = 1:3
 end
 
 % 9. Carry out the Cholesky factorization
-KMatEstimates = chol(Phi);
+KMatEstimated = chol(Phi);
 
 % Invert the factor
-KMatEstimated = KMatestimated\eye(3);
+KMatEstimated = KMatEstimated\eye(3);
 
 % The scaling of the grid has no impact on the scaling of the KMatrix as
 % the vector 't' takes no part in the estimate of Phi. Only the image
