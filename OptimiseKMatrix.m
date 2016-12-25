@@ -1,4 +1,4 @@
-function [ KMatrix ] = OptimiseKMatrix( InitialKMatrix,Data ) %OptimiseKMatrix Optimises a K-matrix using Levenberg -Marquardt %
+function [ KMatrix ] = OptimiseKMatrix(InitialKMatrix,Data) %OptimiseKMatrix Optimises a K-matrix using Levenberg -Marquardt %
 % InitialKMatrix is the 'seed' K-matrix to start the optimization.
 % Data is a Matlab cell structure containing homogrpahies,
 % corresponding points in the form [[u v]' [x y]'], and the
@@ -9,6 +9,7 @@ function [ KMatrix ] = OptimiseKMatrix( InitialKMatrix,Data ) %OptimiseKMatrix O
 % rotation matrix. Store with the initial translation vector.
 % 2. Compute the error vector, e, and total error.
 % Compute the Jacobian, J, and J'J. Find the maximum element of
+
 % J'J, multiply by, say, 0.1 and set mu to this value.
 % 3. Solve (J'J + muI)dp = -J'e
 
@@ -28,7 +29,7 @@ function [ KMatrix ] = OptimiseKMatrix( InitialKMatrix,Data ) %OptimiseKMatrix O
 % until it becomes a poor predictor of the change in error - I then recompute.
 % Carry out your sanity checks here ....
 % Initialise the KMatrix
-KMatrix = InitialKMatrix;
+ KMatrix = InitialKMatrix;
 
 % Normalize the K-matrix (just in case)
 KMatrix = KMatrix / KMatrix(3,3);
@@ -145,7 +146,7 @@ Gradient = zeros(ProblemSize ,1);
 % 2. Compute the inital error vector and the Jacobians and the inner product
 for j = 1: nImages
     % The error vector for each image
-    OptComponents{j,NERRORVECTOR} = ComputeImageErrors( KMatrix , ...
+    OptComponents{j,NERRORVECTOR} = ComputeImageErrorsMax( KMatrix , ...
         FrameParameters{j,NANGLE}, FrameParameters{j,NTRANSLATION},...
         Data{j,NCORRESPOND}, Data{j,NCONSENSUS});
     
@@ -155,7 +156,7 @@ for j = 1: nImages
     
     % The Jacobian for each image
     [OptComponents{j,NKMATJACOB}, OptComponents{j,NFRAMEJACOB}] = ...
-        SingleImageJacobian( KMatrix ,...
+        SingleImageJacobianMax( KMatrix ,...
         FrameParameters{j,NANGLE}, FrameParameters{j,NTRANSLATION},...
         Data{j,NCORRESPOND}, Data{j,NCONSENSUS});
     
@@ -204,7 +205,7 @@ while Searching == 1
     
     % 4. Test for convergence - choose a size for the gradient
     
-    if norm(Gradient)/ProblemSize < 0.001
+    if norm(Gradient)/ProblemSize < 0.1
         break; % Leave the loop
     end
     % 3. Solve for the change to parameters
@@ -236,7 +237,7 @@ while Searching == 1
         
         % ... And compute the error vector for this image
         OptComponents{j,NERRORVECTOR} = ...
-            ComputeImageErrors( KMatPerturbed , ...
+            ComputeImageErrorsMax( KMatPerturbed , ...
             FrameParametersPerturbed{j,NANGLE},...
             FrameParametersPerturbed{j,NTRANSLATION},...
             Data{j,NCORRESPOND}, Data{j,NCONSENSUS});
@@ -280,7 +281,7 @@ while Searching == 1
                 % The Jacobian
                 [OptComponents{j,NKMATJACOB},...
                     OptComponents{j,NFRAMEJACOB}] = ...
-                    SingleImageJacobian( KMatrix ,...
+                    SingleImageJacobianMax( KMatrix ,...
                     FrameParameters{j,NANGLE}, ...
                     FrameParameters{j,NTRANSLATION},...
                     Data{j,NCORRESPOND}, Data{j,NCONSENSUS});

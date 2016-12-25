@@ -10,11 +10,11 @@ function [Parameters]= DefineParameters
 % (8) P_v - The offset to the principal point as a fraction of the height
 
 Parameters = zeros(8,1);
-Parameters(1)=500;
-Parameters(2)=500;
-Parameters(3)=50;
-Parameters(4)=.05;
-Parameters(5)=.05;
+Parameters(1)=1000;
+Parameters(2)=1000;
+Parameters(3)=10;
+Parameters(4)=.01;
+Parameters(5)=.01;
 Parameters(6)=0;
 Parameters(7)=.5;
 Parameters(8)=.5;

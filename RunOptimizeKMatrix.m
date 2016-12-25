@@ -28,7 +28,7 @@ nImages = 6;
 % The grid is a set of 4-element vectors [x y 0 1]'.
 GridWidth = 1000;
 GridIncrement = 10;
-CalibrationGrid = BuildGrid(GridIncrement ,GridWidth);
+CalibrationGrid = BuildGrid(GridIncrement,GridWidth);
 
 
 % 3. Choose somewhere in space for the grid
@@ -73,9 +73,10 @@ for CalImage = 1: nImages
         % Correspond is a set of pairs of vectors of the form
         % [[u v]' [x y]'] for each grid corner that lies inside the
         % image.
-        
+        mu = 0;
+        std = 1;
         Correspond = BuildNoisyCorrespondences(T_ow,T_cw,...
-            CalibrationGrid ,KMatrix ,CameraHeight ,CameraWidth);
+            CalibrationGrid ,KMatrix ,CameraHeight ,CameraWidth,mu,std);
         
         
         % 6. Add in some 'outliers' by replacing [u v]' with a point
@@ -107,10 +108,10 @@ for CalImage = 1: nImages
         % in the norm (u and v).
         % Note: The above is in pixels - so scale before Ransac!
         % The number of runs when creating the consensus set.
-        RansacRuns = 50;
+        RansacRuns = 10;
         
         [Homog, BestConsensus] = ...
-            RansacHomog(Correspond ,Maxerror*CameraScale ,RansacRuns);
+            RansacHomog(Correspond,Maxerror*CameraScale,RansacRuns);
         
         
         

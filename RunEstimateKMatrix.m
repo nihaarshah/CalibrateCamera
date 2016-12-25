@@ -11,11 +11,8 @@
 % 5. Generate the noisy image of the grid.
 % 6. Add in some outliers.
 % 7. Perform a Ransac estimate of the homography
-%
+
 % Once the homographies have been estimated
-%
-%
-%
 % 8. Build the regressor for estimating the K-matrix
 % 9. Carry out the Cholesky factorization and invert.
 
@@ -64,8 +61,10 @@ for CalImage = 1: nImages
         
         % Correspond is a set of pairs of vectors of the form [[u v]' [x y ]']
         % for each grid corner that lies inside the image.
+        mu = 0;
+        std = 0;
         Correspond = BuildNoisyCorrespondences(T_ow,T_cw,CalibrationGrid,...
-            KMatrix ,CameraHeight ,CameraWidth);
+            KMatrix,CameraHeight,CameraWidth,mu,std);
         
         % 6. Add in some 'outliers' by replacing [u v]' with a point
         % somewhere in the image.
@@ -76,8 +75,8 @@ for CalImage = 1: nImages
             
             if r < pOutlier
                 
-                Correspond(1,j) = rand * (CameraWidth -1);
-                Correspond(2,j) = rand * (CameraHeight -1);
+                Correspond(1,j) = rand * (CameraWidth-1);
+                Correspond(2,j) = rand * (CameraHeight-1);
             end
         end
         
@@ -122,12 +121,12 @@ end % end of the nImages loop
 
 
 % 8. Build the regressor for estimating the Cholesky product
-Regressor = zeros(2*nImages ,6);
+Regressor = zeros(2*nImages,6);
 
 for CalImage = 1:nImages
     r1 = 2* CalImage -1;
     r2 = 2*CalImage;
-    Regressor(r1:r2,:) = KMatrixRowPair(HomogData{CalImage ,1});
+    Regressor(r1:r2,:) = KMatrixRowPair(HomogData{CalImage,1});
 end
 
 % Find the kernel
@@ -184,3 +183,5 @@ KMatEstimated(2,3) = KMatEstimated(2,3) + 1;
 
 % Rescale back to pixels
 KMatEstimated(1:2,1:3) = KMatEstimated(1:2,1:3) / CameraScale;
+
+

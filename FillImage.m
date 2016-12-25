@@ -8,9 +8,9 @@ function [ T_cw ] = FillImage(T_ow,KMatrix,GridWidth,CameraHeight,CameraWidth)
 % CameraHeight and CameraWidth are the sizes of the image in pixels
 
 % Define the Left Top, Left Bottom, Right Top and Right Bottom of the grid .
-GridCorners = [-GridWidth/2 -GridWidth/2 GridWidth/2 GridWidth/2;...
-    GridWidth/2 -GridWidth/2 GridWidth/2 -GridWidth/2;...
-    0 0 0 0;...
+GridCorners = [-GridWidth/2 -GridWidth/2 GridWidth/2 GridWidth/2;
+    GridWidth/2 -GridWidth/2 GridWidth/2 -GridWidth/2;
+    0 0 0 0;
     1 1 1 1];
 
 % Compute the positions of the GridCorners in the world

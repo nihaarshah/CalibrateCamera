@@ -1,5 +1,5 @@
 function [Correspond] = BuildNoisyCorrespondences(T_ow, T_cw, CalibrationGrid, KMatrix ...
-    ,CameraHeight, CameraWidth)
+    ,CameraHeight, CameraWidth,mu,std)
  
 % CalibrationGrid = CalibrationGrid';
 % To generate a random matrix which has the same size as the
@@ -25,9 +25,12 @@ CalibrationImage(2,:) = CalibrationImage(2,:) ./ CalibrationImage(3,:);
  
  
 CalibrationImage = CalibrationImage(1:2,:);
- 
-% Adding noise with a pre-set variance to the image
- CalibrationImage = CalibrationImage + noise * randn(size(CalibrationImage));
+
+% Size of CalibrationGridImage so we can add noise
+[m,n] = size(CalibrationImage);
+
+% Adding Gaussian noise with a changeable variance to the image
+ CalibrationImage = CalibrationImage + random('norm',mu,std,m,n);
  
  
  

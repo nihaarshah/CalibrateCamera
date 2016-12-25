@@ -101,9 +101,9 @@ for Runs = 1:NRuns
             Homog(2,3) = HomogVec(6);
             Homog(3,1) = HomogVec(7);
             Homog(3,2) = HomogVec(8);
-            Homog (3 ,3) = 1;
+            Homog(3,3) = 1;
             
-            % The number of points in set the current consensus set and 
+            % The number of points in the current consensus set and 
             % the set itself
             
             nCurrent = 0;
@@ -112,13 +112,13 @@ for Runs = 1:NRuns
             
             for j=1:n
                 HomogenousPoint = Homog * [Correspond(3,j);Correspond(4,j);1];
-                HomogenousPoint (1) = HomogenousPoint (1) /HomogenousPoint(3);
-                HomogenousPoint (2) = HomogenousPoint (2)/HomogenousPoint(3);
-                
-                
+                HomogenousPoint(1) = HomogenousPoint(1) / HomogenousPoint(3);
+                HomogenousPoint(2) = HomogenousPoint(2) / HomogenousPoint(3);
+                                
                 ThisError = norm(HomogenousPoint(1:2)- [Correspond(1,j);Correspond(2,j)]);
+                
                 if ThisError < MaxError
-                    nCurrent = nCurrent +1;
+                    nCurrent = nCurrent+1;
                     CurrentConsensus(nCurrent) = j;
                 end
             end
@@ -149,7 +149,7 @@ if nBest > 0
         % multiplies the unknown vector of the homography elements
         % to get the vector of the measurements.
         
-        [Regressor(r1:r2,:), DataVec(r1:r2,1)] =...
+        [Regressor(r1:r2,:),DataVec(r1:r2)] =...
             HomogRowPair(Correspond(:,BestConsensus(j)));
     end
     % Find the singular value decomposition in order to compute the
@@ -186,7 +186,7 @@ if nBest > 0
         Homog(2,2) = HomogVec(5);
         Homog(2,3) = HomogVec(6);
         Homog(3,1) = HomogVec(7);
-        Homog(3,1) = HomogVec(8);
+        Homog(3,2) = HomogVec(8);
         Homog(3,3) = 1;
     end
     

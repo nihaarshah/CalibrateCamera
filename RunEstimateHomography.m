@@ -38,8 +38,10 @@ T_cw = FillImage(T_ow, KMatrix,GridWidth, CameraHeight, CameraWidth);
 % Correspond is a set of pairs of vectors of the form [[u v]' [x y]']
 %for each grid corner that lies inside the image.
 
+mu = 0;
+std = 0.1;
 Correspond = BuildNoisyCorrespondences(T_ow, T_cw, CalibrationGrid, KMatrix ...
-,CameraHeight, CameraWidth);
+,CameraHeight, CameraWidth,mu,std);
 
 % 6. Add in some 'outliers' by replacing [u v]' with a point
 % somewhere in the image.
@@ -56,7 +58,7 @@ end
 
 figure(1)
 plot(Correspond(1,:), Correspond(2,:), '.')
-title('The noisy measurements of the title corners')
+title('The noisy measurements of the tile corners')
 axis ij
 
 % 7 Perform the Ransac estimation - output the result for the inspection
@@ -67,10 +69,16 @@ RansacRuns = 50;    %The number of runs when creating the consensus set
 
 % If you want to test the result, we can construct the homography for the
 % system from its definition
-
+BestConsensus = BestConsensus(BestConsensus~=0);
 % First find the object frame in the camera frame
 T_oc = T_cw \ T_ow;
 %Construct the non-normalized homography from K*[x y t]
 OrigHomog = KMatrix * [T_oc(1:3,1) T_oc(1:3,2) T_oc(1:3,4)];
 %And normalize so that (3,3) is 1.0-output for inspection
 OrigHomog = OrigHomog / OrigHomog(3,3);
+
+X=['The best consensus for Maxerror of ',num2str(Maxerror),'has',num2str(length(BestConsensus)),'elements'];
+BestConsensus;
+disp(X);
+% Plotting the norm of HomogEstimate minus norm of OrigHomog vs RansacRuns
+

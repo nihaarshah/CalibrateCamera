@@ -6,25 +6,6 @@ function [KMatrixJacobBlock, FrameJacobBlock] = SingleImageJacobian(KMatrix,RotA
 % derivative with respect to one of tge 5 Kmatrix parameters.
 % The second block is similar except the parameters are now the 6 parametsr
 % of the Rotation (3 axes) and translation(3 axes).
-
-
-% Theta = norm(RotAxis); % Maybe the axis of rotation is theta * unit 
-%     % length axis of rotation so taking the norm will give us the magnitude
-%     % of this axis which is theta?
-% n = 4;
-% x = RotAxis(1)/Theta;
-% y = RotAxis(2)/Theta;
-% z = RotAxis(3)/Theta;
-%  
-% K =[0 -z y; z 0 -x; -y x 0]; %Different K matrix 
- 
-% Theta = Phi/RotAxis - n*pi; What i thought earlier
- 
-% R = [1 0 0;0 1 0; 0 0 1] + sin(Theta)*K + (1-cos(Theta))*[K]^2;
-%  
-% Perspectivity = [R Translation; [0 0 0] 1];
-%  
-% Homography = KMatrix * Perspectivity;
  
 Parameter(1) = KMatrix(1,1);
 Parameter(2) = KMatrix(1,2);
@@ -37,6 +18,7 @@ Parameter(8) = RotAxis(3);
 Parameter(9) = Translation(1);
 Parameter(10) = Translation(2);
 Parameter(11) = Translation(3);
+
 
 BestConsensusIndices = BestConsensusIndices(BestConsensusIndices~=0); %find non zero
 
@@ -58,7 +40,7 @@ for row = 1:2:((2*nBestConsensus)-1)
         
         % Perturb K parameters
         dp = zeros(11);
-        dp(i) = dp(i) + 1.0e-1;
+        dp(i) = dp(i) + 1.0e-2;
         NewParameters = Parameter + dp;
         
         % Find new estimates after perturbation
@@ -89,7 +71,7 @@ for row = 1:2:((2*nBestConsensus)-1)
         
         % Perturb K parameters
         dp = zeros(11);
-        dp(j) = dp(j) + 1.0e-1;
+        dp(j) = dp(j) + 1.0e-2;
         NewParameters = Parameter + dp;
         
         % Find new estimates after perturbation
@@ -105,23 +87,6 @@ for row = 1:2:((2*nBestConsensus)-1)
         B2(row:row+1,j-5) = dfdp;
     end
 end
-
-% for block1row = 1:nBestConsensus
-%     %Estimate image location for that particular index 
-%     Estimates = Homography * Correspond(3:4,BestConsensusIndices(block1row));
-%      for block1col = 1:5             
-%         B1(block1row,block1col)=ForwardDifference(Estimates,KParameter(block1col));
-%     end 
-% end
-% 
-% 
-%     
-% for block2row = 1:nBestConsensus
-%     Estimates = Homography * Correspond(3:4,BestConsensusIndices(block2row));
-%     for block2col = 1:6
-%         B2(block2row,block2col)=ForwardDifference(Estimates,RotParameter(block2col));
-%     end
-% end
 
 KMatrixJacobBlock = B1;
 FrameJacobBlock = B2;

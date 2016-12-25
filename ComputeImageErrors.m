@@ -1,40 +1,28 @@
 function [ErrorVec] = ComputeImageErrors(KMatrix,RotAxis,...
     Translation,Correspond,ConsensusVector)
+% This function calculates the difference between [u' v'] estimates and [u
+% v] measured. The error is a 2 x 1 column vector. The loop runs n
+% times if there are number n non-zero entries in the BestConsensus
+% vector. The error calculated in each iteration is stacked in a column
+% vector of size 2n x 1.
+
 
 ConsensusVector = ConsensusVector(ConsensusVector~=0); %find non zero
-% Theta = norm(RotAxis); % Maybe the axis of rotation is theta * unit
-%     % length axis of rotation so taking the norm will give us the magnitude
-%     % of this axis which is theta?
-% n = 4;
-% x = RotAxis(1)/Theta;
-% y = RotAxis(2)/Theta;
-% z = RotAxis(3)/Theta;
-%
-% K =[0 -z y; z 0 -x; -y x 0]; %Different K matrix
-%
-% % Theta = Phi/RotAxis - n*pi; What i thought earlier
-%
-% R = [1 0 0;0 1 0; 0 0 1] + sin(Theta)*K + (1-cos(Theta))*[K]^2;
-%
-% P = [R Translation; [0 0 0] 1];
-% Perspectivity = [P(1:3,1:2),P(1:3,4)];
-% One = ones(size(Correspond));
-% Correspond = vertcat(Correspond,One);
-% Homography = KMatrix * Perspectivity;
+sz = length(ConsensusVector);
 
 ErrorVec=[];
 One = ones(size(Correspond));
-Correspond = vertcat(Correspond,One);
+Correspond = vertcat(Correspond,One); % Adding a row of 1s in the bottom of 
+% Correspond so now [u v x y 1] is one column of 5 x n matrix correspond
 
 [Homography]=CalculateHomog(RotAxis,KMatrix,Translation);
-sz = length(ConsensusVector);
-% fk =zeros(1:3,1);
-% mk = zeros(1:2,1);
+
+
 
 for i = 1:2:(2*sz-1)
     fk=Homography * Correspond(3:5,ConsensusVector((i+1)/2)); % [u' v' s]' or the estimated u v coordinates
-%     fk = fk(1:2,(i+1)/2); % [u' v' s]'
-    % shall we normalize???
+    % fk = fk(1:2,(i+1)/2); % [u' v' s]'
+    % we normalize
     fk(1) = fk(1)/fk(3);
     fk(2) = fk(2)/fk(3);
         
