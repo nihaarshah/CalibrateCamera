@@ -1,4 +1,4 @@
-function [J4] = JacobianSym(KMatrixValues,RotValues,...
+function [J4,J8] = JacobianSym(KMatrixValues,RotValues,...
     TranslationValues,CorrValues,BestConsensus)
  
 % BestConsensus = [1,2];
@@ -7,16 +7,11 @@ n = length(BestConsensus);
 %Parameters come from KMatrix, Rotation axis and Translation vector
 K = sym('k',[3,3]);
 RotAxis = sym('rot',[1,3]);
-% RotAxisNormalized = sym('rotN',[1,3]);
 t = sym('t',[3,1]);
 Theta = norm(RotAxis);
-% RotAxisNormalized = RotAxis/Theta;
 Correspond=sym('cor',[4,n]);
-% RotAxisNormalized = RotAxis/Theta;
 fin = sym('fin',[2*n,1]);
 
-% Grid point coordinate
-syms x y
 
 % L is a matrix made of rotaxis parameters. It is used to find the rotation
 % matrix
@@ -34,30 +29,29 @@ R = I + sin(Theta)*L + (1-cos(Theta))*L^2;
 r1 = R(1:3,1);
 r2 = R(1:3,2);
 P = [r1,r2,t];
-
+fin =[];
 for i = 1:n
-    XY = Correspond(3:4,BestConsensus(n));
+    XY = Correspond(3:4,BestConsensus(i));
     f = K * P * [XY' 1]';
 %     J = jacobian(f,[k1_1,k1_2,k1_3,k2_2,k2_3,rotN1_1,rotN1_2,rotN1_3,t1_1,t2_1,t3_1]);
     f = f/f(3);
-    fin = [f(1:2,1);fin];
+    fin = [fin;f(1:2,1)];
     
 end
 Variables = [K(1,1),K(1,2),K(1,3),K(2,2),K(2,3),RotAxis(1,1),RotAxis(1,2),RotAxis(1,3),t(1,1),t(2,1),t(3,1)];
-J = jacobian(fin,Variables);
 
+JKMat = jacobian(fin,Variables(1,1:5));
+JFram = jacobian(fin,Variables(1,6:11));
 
-% Assigning values to the symbols
-% KMatrixValues = [1000,0,500;0,1000,500;0,0,1];
-% RotValues = [1 2 1];
-% TranslationValues = [1 2 1]';
-% CorrValues = [1 2 3 1;1 1 1 1]; 
-
-J1 = subs(J,K,KMatrixValues);
+% Subbing in the K parameter values
+J1 = subs(JKMat,K,KMatrixValues);
 J2 = subs(J1,RotAxis,RotValues');
 J3 = subs(J2,t,TranslationValues);
 J4 = subs(J3,Correspond,CorrValues);
 
+J5 = subs(JFram,K,KMatrixValues);
+J6 = subs(J5,RotAxis,RotValues');
+J7 = subs(J6,t,TranslationValues);
+J8 = subs(J7,Correspond,CorrValues);
 
-% Ls = subs(f,{RotAxisNormalized,t,Correspond,K},{RotValues,TranslationValues,CorrValues,KMatrixValues});
 
