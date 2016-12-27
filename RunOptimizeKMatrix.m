@@ -26,7 +26,7 @@ nImages = 6;
 
 % 2. Construct a 1m by 1m grid with 10mm tiles in the grid frame
 % The grid is a set of 4-element vectors [x y 0 1]'.
-GridWidth = 1000;
+GridWidth = 100;
 GridIncrement = 10;
 CalibrationGrid = BuildGrid(GridIncrement,GridWidth);
 
@@ -74,7 +74,7 @@ for CalImage = 1: nImages
         % [[u v]' [x y]'] for each grid corner that lies inside the
         % image.
         mu = 0;
-        std = 1;
+        std = 0;
         Correspond = BuildNoisyCorrespondences(T_ow,T_cw,...
             CalibrationGrid ,KMatrix ,CameraHeight ,CameraWidth,mu,std);
         
@@ -82,7 +82,7 @@ for CalImage = 1: nImages
         % 6. Add in some 'outliers' by replacing [u v]' with a point
         % somewhere in the image.
         % Define the Outlier probability
-        pOutlier = 0.05;
+        pOutlier = 0.00;
         
         for j = 1:length(Correspond)
             r = rand;
@@ -108,12 +108,12 @@ for CalImage = 1: nImages
         % in the norm (u and v).
         % Note: The above is in pixels - so scale before Ransac!
         % The number of runs when creating the consensus set.
-        RansacRuns = 10;
+        RansacRuns = 50;
         
         [Homog, BestConsensus] = ...
             RansacHomog(Correspond,Maxerror*CameraScale,RansacRuns);
         
-        
+        BestConsensus=BestConsensus(BestConsensus~=0);
         
         if Homog (3 ,3) > 0
             % This image worked. So record the homography and the

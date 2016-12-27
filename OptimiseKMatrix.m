@@ -29,7 +29,7 @@ function [ KMatrix ] = OptimiseKMatrix(InitialKMatrix,Data) %OptimiseKMatrix Opt
 % until it becomes a poor predictor of the change in error - I then recompute.
 % Carry out your sanity checks here ....
 % Initialise the KMatrix
- KMatrix = InitialKMatrix;
+KMatrix = InitialKMatrix;
 
 % Normalize the K-matrix (just in case)
 KMatrix = KMatrix / KMatrix(3,3);
@@ -101,8 +101,8 @@ for nHomog = 1:nImages
     
     % We need to check if the axis is pointing in the 'right' direction
     % consistent with Theta using Rodrigue's formula
-    Rplus = RodriguesRotation(RotAxis ,Theta);
-    Rminus = RodriguesRotation(-RotAxis ,Theta);
+    Rplus = RodriguesRotation(RotAxis,Theta);
+    Rminus = RodriguesRotation(-RotAxis,Theta);
     
     % Reverse the axis if minus Theta is the best match
     if norm(RotMat-Rminus) < norm(RotMat-Rplus)
@@ -160,6 +160,12 @@ for j = 1: nImages
         FrameParameters{j,NANGLE}, FrameParameters{j,NTRANSLATION},...
         Data{j,NCORRESPOND}, Data{j,NCONSENSUS});
     
+        % The Jacobian for each image using symbolic
+    [Jacob] = ...
+        JacobianSym( KMatrix ,...
+        FrameParameters{j,NANGLE}, FrameParameters{j,NTRANSLATION},...
+        Data{j,NCORRESPOND}, Data{j,NCONSENSUS});
+    
     
     % The top 5x5 block is the sum of all the inner products of the K-matrix
     % Jacobian blocks.
@@ -205,7 +211,7 @@ while Searching == 1
     
     % 4. Test for convergence - choose a size for the gradient
     
-    if norm(Gradient)/ProblemSize < 0.1
+    if norm(Gradient)/ProblemSize < 0.001
         break; % Leave the loop
     end
     % 3. Solve for the change to parameters
@@ -227,17 +233,19 @@ while Searching == 1
     % Initialise the error for the latest test
     NewError = 0;
     
-    for j = 1: nImages
+    for j = 1:nImages
         % Perturb the image location
-        StartRow = 6 + (j-1)*6; FrameParametersPerturbed{j,NANGLE} = ...
+        StartRow = 6 + (j-1)*6; 
+        FrameParametersPerturbed{j,NANGLE} = ...
             FrameParametersPerturbed{j,NANGLE} + dp(StartRow:StartRow+2);
+        
         FrameParametersPerturbed{j,NTRANSLATION} = ...
             FrameParametersPerturbed{j,NTRANSLATION} + ...
             dp(StartRow+3:StartRow+5);
         
         % ... And compute the error vector for this image
         OptComponents{j,NERRORVECTOR} = ...
-            ComputeImageErrorsMax( KMatPerturbed , ...
+            ComputeImageErrorsMax(KMatPerturbed , ...
             FrameParametersPerturbed{j,NANGLE},...
             FrameParametersPerturbed{j,NTRANSLATION},...
             Data{j,NCORRESPOND}, Data{j,NCONSENSUS});
@@ -285,6 +293,13 @@ while Searching == 1
                     FrameParameters{j,NANGLE}, ...
                     FrameParameters{j,NTRANSLATION},...
                     Data{j,NCORRESPOND}, Data{j,NCONSENSUS});
+                
+                        % The Jacobian for each image using symbolic
+    [Jacob] = ...
+        JacobianSym( KMatrix ,...
+        FrameParameters{j,NANGLE}, FrameParameters{j,NTRANSLATION},...
+        Data{j,NCORRESPOND}, Data{j,NCONSENSUS});
+                
                 
                 % The top 5x5 block is the sum of all the inner products ofthe
                 % K-matrix Jacobian blocks.

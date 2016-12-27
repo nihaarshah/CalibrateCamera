@@ -12,7 +12,7 @@ sz = length(ConsensusVector);
 
 ErrorVec=[];
 One = ones(size(Correspond));
-Correspond = vertcat(Correspond,One); % Adding a row of 1s in the bottom of 
+Correspond = [Correspond;One]; % Adding a row of 1s in the bottom of 
 % Correspond so now [u v x y 1] is one column of 5 x n matrix correspond
 
 [Homography]=CalculateHomog(RotAxis,KMatrix,Translation);

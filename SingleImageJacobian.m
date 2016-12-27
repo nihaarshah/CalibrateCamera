@@ -39,9 +39,9 @@ for row = 1:2:((2*nBestConsensus)-1)
         InitialEstimate = InitialEstimate(1:2,1); % [u0' v0']
         
         % Perturb K parameters
-        dp = zeros(11);
-        dp(i) = dp(i) + 1.0e-2;
-        NewParameters = Parameter + dp;
+        dp = ones(11);
+        dp(i) = 1+(1e-2);
+        NewParameters = Parameter * dp;
         
         % Find new estimates after perturbation
         NewKMatrix=CalculateNewKMatrix(NewParameters);
@@ -52,7 +52,7 @@ for row = 1:2:((2*nBestConsensus)-1)
         NewEstimate = NewEstimate(1:2,1); % [u1' v1']
         
         % Find derivative
-        dfdp = (NewEstimate-InitialEstimate)/dp(i); % [du dv]
+        dfdp = (NewEstimate-InitialEstimate)/(Parameter(i)*(dp(i)-1)); % [du dv]
         B1(row:row+1,i) = dfdp;
     end
     
@@ -70,9 +70,9 @@ for row = 1:2:((2*nBestConsensus)-1)
         InitialEstimate = InitialEstimate(1:2,1); % [u0' v0']
         
         % Perturb K parameters
-        dp = zeros(11);
-        dp(j) = dp(j) + 1.0e-2;
-        NewParameters = Parameter + dp;
+        dp = ones(11);
+        dp(j) = 1+(1e-2);
+        NewParameters = Parameter * dp;
         
         % Find new estimates after perturbation
         [NewRotAxis,NewTranslation] = CalculateNewRotTrans(NewParameters);
@@ -83,7 +83,7 @@ for row = 1:2:((2*nBestConsensus)-1)
         NewEstimate = NewEstimate(1:2,1); % [u1' v1']
         
         % Find derivative
-        dfdp = (NewEstimate-InitialEstimate)/dp(j); % [du dv]
+        dfdp = (NewEstimate-InitialEstimate)/(Parameter(j)*(dp(j)-1)); % [du dv]
         B2(row:row+1,j-5) = dfdp;
     end
 end

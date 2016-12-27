@@ -62,7 +62,7 @@ for CalImage = 1: nImages
         % Correspond is a set of pairs of vectors of the form [[u v]' [x y ]']
         % for each grid corner that lies inside the image.
         mu = 0;
-        std = 0;
+        std = 0.3;
         Correspond = BuildNoisyCorrespondences(T_ow,T_cw,CalibrationGrid,...
             KMatrix,CameraHeight,CameraWidth,mu,std);
         
@@ -89,7 +89,7 @@ for CalImage = 1: nImages
         
         % 7. Perform the Ransac estimation - output the result for inspection
         % If the Ransac fails it retuns a zero Homography
-        Maxerror = 3.0; % The maximum error allowed before rejecting a point.
+        Maxerror = 3; % The maximum error allowed before rejecting a point.
         
         % I am using a variance of 0.5 pixels so sigma is sqrt(0.5)
         % 3 pixels in the *NORM* is 3 sigma as there are 2 errors involved
@@ -184,4 +184,7 @@ KMatEstimated(2,3) = KMatEstimated(2,3) + 1;
 % Rescale back to pixels
 KMatEstimated(1:2,1:3) = KMatEstimated(1:2,1:3) / CameraScale;
 
-
+BestConsensus = BestConsensus(BestConsensus~=0);
+X=['The best consensus for Maxerror of ',num2str(Maxerror),' has ',num2str(length(BestConsensus)),' elements in it.'];
+BestConsensus;
+disp(X);

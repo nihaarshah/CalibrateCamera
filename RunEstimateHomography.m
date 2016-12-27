@@ -39,7 +39,7 @@ T_cw = FillImage(T_ow, KMatrix,GridWidth, CameraHeight, CameraWidth);
 %for each grid corner that lies inside the image.
 
 mu = 0;
-std = 0.1;
+std = 1;
 Correspond = BuildNoisyCorrespondences(T_ow, T_cw, CalibrationGrid, KMatrix ...
 ,CameraHeight, CameraWidth,mu,std);
 
@@ -69,7 +69,7 @@ RansacRuns = 50;    %The number of runs when creating the consensus set
 
 % If you want to test the result, we can construct the homography for the
 % system from its definition
-BestConsensus = BestConsensus(BestConsensus~=0);
+
 % First find the object frame in the camera frame
 T_oc = T_cw \ T_ow;
 %Construct the non-normalized homography from K*[x y t]
@@ -77,6 +77,8 @@ OrigHomog = KMatrix * [T_oc(1:3,1) T_oc(1:3,2) T_oc(1:3,4)];
 %And normalize so that (3,3) is 1.0-output for inspection
 OrigHomog = OrigHomog / OrigHomog(3,3);
 
+
+BestConsensus = BestConsensus(BestConsensus~=0);
 X=['The best consensus for Maxerror of ',num2str(Maxerror),'has',num2str(length(BestConsensus)),'elements'];
 BestConsensus;
 disp(X);
