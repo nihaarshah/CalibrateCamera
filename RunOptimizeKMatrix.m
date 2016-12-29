@@ -197,4 +197,10 @@ KMatEstimated(2,3) = KMatEstimated(2,3) + 1;
 % Rescale back to pixels
 KMatEstimated(1:2,1:3) = KMatEstimated(1:2,1:3)/CameraScale;
 
+% Add 1.0 to trhe translation part of the image
+OptKMatrix(1,3) = OptKMatrix(1,3) + 1;
+OptKMatrix(2,3) = OptKMatrix(2,3) + 1;
+
+% Rescale back to pixels
+OptKMatrix(1:2,1:3) = OptKMatrix(1:2,1:3)/CameraScale;
 
