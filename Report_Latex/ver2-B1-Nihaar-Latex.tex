@@ -45,7 +45,7 @@ The main tasks and their corresponding equations are below:
 % Simulation subsection of Outline
 \subsection{Simulation}
 In this project we are simulating the calibration object instead of using a real world calibration object to build our point correspondences between object and image. We use a known K-matrix to make these correspondences unlike in practice where the K matrix is unknown but the distances in the calibration object can be fed into the program to build the correspondences along with location of object in world coordinates. Thus, in this project we have functions to position the camera and object in world coordinates instead. A good test for these functions is to view a simulated cube as seen by the camera like in figure (1). Note the 4MP camera hence 2000 x 2000 dimensions of the image.
-\begin{wrapfigure}{l}{4.5}
+\begin{wrapfigure}{L}{4.5}
   \begin{center}
     \caption{Simulated cube in the camera's field of vision.}\label{wrap-fig:9}
     \includegraphics[width = 4.5cm, height=4.5cm]{SimulateCube.eps}
@@ -99,7 +99,7 @@ Equation 2 shows how we build point correspondences between object xy coordinate
  \implies \mathbf{p}_{j} = \mathbf{\Phi}_{j}  \mathbf{h}_{j}
       \end{equation}
 % Build noisy image figure
-\begin{wrapfigure}{r}{4.5}
+\begin{wrapfigure}{R}{4.5}
   \begin{center}
     \label{wrap-fig:1}
     \includegraphics[width = 4.5cm, height=4.5cm]{GridImage.eps}
@@ -158,19 +158,19 @@ Therefore depending on \mu we can control between Newton steps and gradient desc
 \section{Overview of the Structure}
 \subsection{Data Structure}
 \subsection{Control Path}
-\title{RanSac flow}
-RanSac is an alogorithm to eliminate outlier points - in this case points that are noisy in the calibration image. While estimating homography from the edges of the checkerboard we take 4 random points to build our regressor \Phi as seen in equation 4. To ensure these points are a true representation of the objects we perform Ransac.\\
-As mentioned previously, in practice the computer automatically detects the edges of our checkerboard and build corresponding image coordinates given the dimensions of the board.
-Then we choose 4 random points and build a homography. However how do we choose the 4 best points for this homography estimation? \\
-We shall use RanSac so we can use that homography estimate which best agrees or is representative of maximum number of points on the checkerboard. The flowchart in figure 3 \ref{Ransac_Flow} shows this algorithm. Note that UV cordintes are the known points or true points. Using the homography, we multiply it with the xy object coordinates to obtain estimated U’V’. ranSac compares the difference between homography estimated U’V’ and true UV with a threshold MaxError  and populates a vector of points that satisfy this threshold as acceptable inliers. This set is called Best Consensus and then we construct our regressor of the over constrained system and use svd to find the least squares estimate of our final homography if the condition number is “good”. i.e. well conditioned system hence accurate inverse is possible. Once we have a good homography estimate it is straightforward to compute K using svd as mentioned earlier in section..
-\begin{wrapfigure}{r}{5.5cm}
+\maketitle{RanSac flow}
+\begin{wrapfigure}{R}{5.5cm}
   \label{Ransac_Flow}
   \caption{Flowchart for the Estimation task involving RansSac}\label{wrap-fig:1}
   \includegraphics[width = 5.5cm, height=14cm]{Ransac_flowchart.png}
 \end{wrapfigure} 
+RanSac is an alogorithm to eliminate outlier points - in this case points that are noisy in the calibration image. While estimating homography from the edges of the checkerboard we take 4 random points to build our regressor \Phi as seen in equation 4. To ensure these points are a true representation of the objects we perform Ransac.\\
+As mentioned previously, in practice the computer automatically detects the edges of our checkerboard and build corresponding image coordinates given the dimensions of the board.
+Then we choose 4 random points and build a homography. However how do we choose the 4 best points for this homography estimation? \\
+We shall use RanSac so we can use that homography estimate which best agrees or is representative of maximum number of points on the checkerboard. The flowchart in figure 3 \ref{Ransac_Flow} shows this algorithm. Note that UV cordintes are the known points or true points. Using the homography, we multiply it with the xy object coordinates to obtain estimated U’V’. ranSac compares the difference between homography estimated U’V’ and true UV with a threshold MaxError  and populates a vector of points that satisfy this threshold as acceptable inliers. This set is called Best Consensus and then we construct our regressor of the over constrained system and use svd to find the least squares estimate of our final homography if the condition number is “good”. i.e. well conditioned system hence accurate inverse is possible. Once we have a good homography estimate it is straightforward to compute K using svd as mentioned earlier in section..
 \title{Optimization flow}
 The algorithm controls the search to move from steepest descent to newton steps depending on how well the last search performed. The feedback mechanism is that if the error has increased after changing the parameters along a certain direction then the weighting u is increased reducing the step size and causing the algorithm to just search downhill. If on the other hand the error has reduced that means we are closer to the minimum so we search in the neighborhood itself using Newton steps.
-\begin{wrapfigure}{r}{5.5cm}
+\begin{wrapfigure}{R}{5.5cm}
   \label{Optim_Flow}
   \caption{Flowchart for Optimization:the L-M algorithm}\label{wrap-fig:1}
   \includegraphics[width = 5.5cm, height=14cm]{optim-flowchart.png}
@@ -179,19 +179,19 @@ The algorithm controls the search to move from steepest descent to newton steps 
 \subsection{How to measure accuracy}
 Certain tests were conducted to ensure the code accuracy. The simplest was to make the noise variance and mean to zero and set probability of outliers added also to zero in the corresponding matrix. This would mean there are now only inliers i.e. all point correspondences are accurate so estimating homography from any 4 points should give an error of approximately zero, since u’=u and v’=v. Thus \italic{no} points are excluded from consensus vector. This was verified as seen in fig. 6 and 7.
 % screenshot of correspond variable data structure
-\begin{wrapfigure}{r}{5.5cm}
+\begin{wrapfigure}{R}{8.5}
 \caption{Display of values stored inside Correspond. Number of columns represents total points on the grid (object).}\label{wrap-fig:1}
 \includegraphics[width = 8.5cm, height=2.5cm]{Correspond_workspace.png}
 \end{wrapfigure} 
 % screenshot of consensus data structure
-\begin{wrapfigure}{r}{5.5cm}
+\begin{wrapfigure}{R}{8.5cm}
 \caption{The dimensions verify that BestConsensus vector contains all the points on the object i.e. no outliers when noise and pOutlier were set to zero.}\label{wrap-fig:1}
 \includegraphics[width = 8.5cm, height=2.5cm]{BestConsensus_workspace.png}
 \end{wrapfigure}
 % 2nd experiment
-The second experiment was to vary number of RanSac runs and examine its effects on the accuracy of K estimated. The accuracy metric used was the L_1 norm because it is less susceptible to outliers than p > 2 norm and maybe more representative that p=0 or p=inf norm(?). More RanSac  runs means more number of homographies to use for best fitting correspondence points hence a more accurate K estimate. The noise, variance and pOutlier were used as control parameters and the general trend corroborates this expectation as seen in \ref{RansacRunsVsAccuracy}.
+The second experiment was to vary number of RanSac runs and examine its effects on the accuracy of K estimated. The accuracy metric used was the L_{1} norm because it is less susceptible to outliers than p > 2 norm and maybe more representative that p=0 or p=inf norm(?). More RanSac  runs means more number of homographies to use for best fitting correspondence points hence a more accurate K estimate. The noise, variance and pOutlier were used as control parameters and the general trend corroborates this expectation as seen in \ref{RansacRunsVsAccuracy}.
 % Plot of ransac vs accuracy
-\begin{wrapfigure}{l}{5.5cm}
+\begin{wrapfigure}{L}{5.5cm}
 \label{RansacRunsVsAccuracy}
 \caption{Varying number of RanSac runs vs accuracy of estimate.}\label{wrap-fig:1}
 \includegraphics[width = 5.5cm, height=5.5cm]{HomogErrorVsRansacRuns.eps}
@@ -201,7 +201,7 @@ Similarly changing the MaxError value will have an effect on the accuracy of our
 Analysis 3: Overfitting if the max error is too low as there will be very few points in the consensus hence the regressor for the robust inverse calculation will have too few points.
 I have made the script also output how many elements are there in best consensus set for a given Max Error value and for an error of 1e-4 and a noise variance of .1 we just have 10 elements and this reduces if error is reduced or noise variance is increased. Too few points in consensus means when we use svd to find robust inverse and hence our Homography there are very few points and therefore a risk of overfitting. This can be seen in the poor accuracy \|\|Kestimated-Kmatrix\|\| for low Max Error in fig 3.
 % Plot of MaxError vs accuracy
-\begin{wrapfigure}{r}{5.5cm}
+\begin{wrapfigure}{R}{5.5cm}
 \caption{Varying MaxError acceptable for RanSac to consider point as inlier vs accuracy of estimate.}\label{wrap-fig:1}
 \includegraphics[width = 5.5cm, height=5.5cm]{MaxErrorVsHomogError.eps}
 \end{wrapfigure} 
@@ -228,7 +228,7 @@ Now if we set noise to zero
 
 \section{Measures of Code Performance}
 \subsection{Noise}
-\begin{wrapfigure}{r}{5.5cm}
+\begin{wrapfigure}{R}{5.5cm}
 \caption{Effect of varying noise variance on accuracy of estimation.}\label{wrap-fig:1}
 \includegraphics[width = 5.5cm, height=5.5cm]{HomogerrorVsNoiseVariance.eps}
 \end{wrapfigure} 
