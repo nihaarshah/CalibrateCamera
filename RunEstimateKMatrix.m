@@ -39,7 +39,13 @@ else
     CameraScale = 2.0 / CameraWidth;
 end
 GridScale = 2.0/GridWidth;
-
+ErrorInEstimationVector = [];
+RansacRunsVector = [];
+KSum = zeros(3,3);
+%This loop if to change the Ransac runs in each iteration and store the
+% error between the estimated and real K matrix each time
+for RansacRuns = 5:15
+% for KMatIterations = 1:10
 % Generate the calibration images and the homographies
 % Store Homographies and consensus sets in a Matlab Cell Array
 % called HomogData.
@@ -69,7 +75,7 @@ for CalImage = 1: nImages
         % 6. Add in some 'outliers' by replacing [u v]' with a point
         % somewhere in the image.
         % Define the Outlier probability
-        pOutlier = 0.05;
+        pOutlier = 0.10;
         for j = 1:length(Correspond)
             r = rand;
             
@@ -96,7 +102,7 @@ for CalImage = 1: nImages
         % in the norm (u and v).
         % Note: The above is in pixels - so scale before Ransac! 
         
-        RansacRuns = 50;
+%         RansacRuns = 50;
         % The number of runs when creating the consensus set.
         
         [Homog,BestConsensus]=RansacHomog(Correspond,Maxerror*CameraScale,RansacRuns);
@@ -183,6 +189,25 @@ KMatEstimated(2,3) = KMatEstimated(2,3) + 1;
 
 % Rescale back to pixels
 KMatEstimated(1:2,1:3) = KMatEstimated(1:2,1:3) / CameraScale;
+
+
+
+% KSum = KMatEstimated+KSum;
+% 
+% end % end the loop for K iterations
+% KEstimatedAverage = KSum/10;
+
+% error between the Kestimated and actual K
+ErrorInEstimation = norm(KMatrix-KMatEstimated,1);
+
+ErrorInEstimationVector = [ErrorInEstimationVector,ErrorInEstimation];
+RansacRunsVector = [RansacRunsVector,RansacRuns];
+end % end of loop that changes ransac runs
+
+plot(RansacRunsVector,ErrorInEstimationVector,'black*');
+ylabel('||K estimated - Original K.||');
+xlabel('number of RanSac runs')
+
 
 BestConsensus = BestConsensus(BestConsensus~=0);
 X=['The best consensus for Maxerror of ',num2str(Maxerror),' has ',num2str(length(BestConsensus)),' elements in it.'];
