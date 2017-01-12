@@ -74,7 +74,7 @@ for CalImage = 1: nImages
         % [[u v]' [x y]'] for each grid corner that lies inside the
         % image.
         mu = 0;
-        std = 0;
+        std = 0.2;
         Correspond = BuildNoisyCorrespondences(T_ow,T_cw,...
             CalibrationGrid ,KMatrix ,CameraHeight ,CameraWidth,mu,std);
         
@@ -82,7 +82,7 @@ for CalImage = 1: nImages
         % 6. Add in some 'outliers' by replacing [u v]' with a point
         % somewhere in the image.
         % Define the Outlier probability
-        pOutlier = 0.00;
+        pOutlier = 0.05;
         
         for j = 1:length(Correspond)
             r = rand;
